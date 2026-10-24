@@ -102,7 +102,7 @@
             *.zip)            unzip -q "$src" ;;
             *.tar.gz|*.tgz)   tar -xzf "$src" ;;
             *.tar.xz)         tar -xJf "$src" ;;
-            *.tar.bz2|*.tbz2) tar -xjf "$src" ;;
+            *.tar.bz2|*.tbz2|*.tbz) tar -xjf "$src" ;;
             *)
               # Dispatch by content because some cask URLs have no archive extension.
               # 7zz 26+ rejects "dangerous link via another link" patterns that are
@@ -143,7 +143,7 @@
             *.zip)            unzip -q "$src" ;;
             *.tar.gz|*.tgz)   tar -xzf "$src" ;;
             *.tar.xz)         tar -xJf "$src" ;;
-            *.tar.bz2|*.tbz2) tar -xjf "$src" ;;
+            *.tar.bz2|*.tbz2|*.tbz) tar -xjf "$src" ;;
             *.tar)            tar -xf "$src" ;;
             *)
               mime="$(file --mime-type -b "$src")"

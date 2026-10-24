@@ -20,6 +20,7 @@ CASKS: list[tuple[Kind, str]] = [
     ("app", "alfred"),  # tar.gz
     ("app", "ammonite"),  # tar.xz
     ("app", "jumpcut"),  # tar.bz2, universal binary
+    ("app", "textmate"),  # tbz
     ("app", "kitty"),  # APFS dmg
     ("app", "sabaki"),  # 7z
     ("app", "raycast"),  # dmg fetched from URL with no archive extension
