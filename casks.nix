@@ -1,7 +1,7 @@
 {
   pkgs,
   lib ? pkgs.lib,
-  brew-api,
+  source,
   stdenvNoCC ? pkgs.stdenvNoCC,
   ...
 }: let
@@ -238,7 +238,7 @@
       };
     });
 
-  casks = lib.trivial.importJSON (brew-api + "/cask.json");
+  casks = lib.trivial.importJSON (source + "/cask.json");
 in
   lib.attrsets.listToAttrs (
     lib.lists.map (cask: {

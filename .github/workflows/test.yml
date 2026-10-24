@@ -43,3 +43,6 @@ jobs:
 
       - name: Check flake
         run: nix flake check --print-build-logs
+
+      - name: Check tests flake
+        run: nix flake check ./tests --print-build-logs

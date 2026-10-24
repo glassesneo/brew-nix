@@ -15,7 +15,7 @@ updates:
       default-days: 7
 
   - package-ecosystem: "nix"
-    directory: "/examples"
+    directory: "/tests"
     schedule:
       interval: "monthly"
     cooldown:

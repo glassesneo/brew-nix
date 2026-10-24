@@ -87,7 +87,7 @@ def check_output(kind: Kind, store: Path) -> None:
 def build(kind: Kind, cask: str) -> BuildResult:
     start = time.monotonic()
     proc = subprocess.run(
-        ["nix", "build", f".#{cask}", "--no-link", "--print-out-paths"],
+        ["nix", "build", f"./tests#brewCasks.{cask}", "--no-link", "--print-out-paths"],
         capture_output=True,
         text=True,
     )
@@ -102,7 +102,7 @@ def build(kind: Kind, cask: str) -> BuildResult:
 
 def check_run(kind: Kind, cask: str) -> tuple[Kind, str, str | None]:
     proc = subprocess.run(
-        ["nix", "build", f".#{cask}", "--no-link", "--print-out-paths"],
+        ["nix", "build", f"./tests#brewCasks.{cask}", "--no-link", "--print-out-paths"],
         capture_output=True,
         text=True,
     )
@@ -110,7 +110,7 @@ def check_run(kind: Kind, cask: str) -> tuple[Kind, str, str | None]:
         return kind, cask, proc.stderr.strip()
     store = Path(proc.stdout.strip().splitlines()[-1])
     proc = subprocess.run(
-        ["nix", "eval", "--raw", f".#{cask}.meta.mainProgram"],
+        ["nix", "eval", "--raw", f"./tests#brewCasks.{cask}.meta.mainProgram"],
         capture_output=True,
         text=True,
     )
@@ -133,7 +133,7 @@ def check_variation(
 ) -> tuple[str, str | None]:
     label = f"{cask} {system} url {'has' if want else 'lacks'} {needle!r}"
     proc = subprocess.run(
-        ["nix", "eval", "--raw", f".#packages.{system}.{cask}.src.url"],
+        ["nix", "eval", "--raw", f"./tests#legacyPackages.{system}.brewCasks.{cask}.src.url"],
         capture_output=True,
         text=True,
     )

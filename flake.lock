@@ -1,21 +1,5 @@
 {
   "nodes": {
-    "brew-api": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1787629879,
-        "narHash": "sha256-Jj0HASSXtVJShA27rNI/UAF/xEsdySFNs/+e2hw0+kA=",
-        "owner": "BatteredBunny",
-        "repo": "brew-api",
-        "rev": "245947c0b920cbe83f4003bb7c6be737352c8314",
-        "type": "github"
-      },
-      "original": {
-        "owner": "BatteredBunny",
-        "repo": "brew-api",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1792506237,
@@ -34,7 +18,6 @@
     },
     "root": {
       "inputs": {
-        "brew-api": "brew-api",
         "nixpkgs": "nixpkgs"
       }
     }
