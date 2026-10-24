@@ -19,7 +19,7 @@ CASKS: list[tuple[Kind, str]] = [
     ("app", "appcleaner"),  # zip
     ("app", "alfred"),  # tar.gz
     ("app", "ammonite"),  # tar.xz
-    ("app", "fauxpas"),  # tar.bz2
+    ("app", "jumpcut"),  # tar.bz2, universal binary
     ("app", "kitty"),  # APFS dmg
     ("app", "sabaki"),  # 7z
     ("app", "raycast"),  # dmg fetched from URL with no archive extension
@@ -46,9 +46,10 @@ VARIATIONS: list[tuple[str, str, str, bool]] = [
 
 
 def is_mach_o(path: Path) -> bool:
+    # Universal binaries print one extra line per architecture after the summary.
     mime = subprocess.check_output(
         ["file", "-b", "--mime-type", path], text=True
-    ).strip()
+    ).splitlines()[0]
     return mime == "application/x-mach-binary"
 
 
