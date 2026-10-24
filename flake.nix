@@ -8,7 +8,6 @@
     let
       inherit (nixpkgs) lib;
 
-      # nixpkgs-unstable has dropped x86_64-darwin; mkCasks itself is system agnostic.
       systems = [ "aarch64-darwin" ];
       forAllSystems = f: lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
     in

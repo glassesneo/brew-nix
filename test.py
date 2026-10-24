@@ -38,14 +38,9 @@ CASKS: list[tuple[Kind, str]] = [
 MAX_PARALLEL = int(os.environ.get("TEST_JOBS", "4"))
 
 VARIATIONS: list[tuple[str, str, str, bool]] = [
-    ("vlc", "x86_64-darwin", "arm64", False),
-    ("vlc", "x86_64-darwin", "intel64", True),
     ("vlc", "aarch64-darwin", "arm64", True),
-    ("audacity", "x86_64-darwin", "x86_64", True),
     ("audacity", "aarch64-darwin", "arm64", True),
-    ("gimp", "x86_64-darwin", "x86_64", True),
     ("gimp", "aarch64-darwin", "arm64", True),
-    ("visual-studio-code", "x86_64-darwin", "darwin-arm64", False),
     ("visual-studio-code", "aarch64-darwin", "darwin-arm64", True),
 ]
 

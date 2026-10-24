@@ -24,22 +24,8 @@
     let
       inherit (nixpkgs) lib;
 
-      systems = [
-        "x86_64-darwin"
-        "aarch64-darwin"
-      ];
-      # nixpkgs-unstable refuses x86_64-darwin; force it so intel variations stay testable.
-      forAllSystems =
-        f:
-        lib.genAttrs systems (
-          system:
-          f (
-            import nixpkgs {
-              inherit system;
-              config.allowDeprecatedx86_64Darwin = "force";
-            }
-          )
-        );
+      systems = [ "aarch64-darwin" ];
+      forAllSystems = f: lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
     in
     {
       legacyPackages = forAllSystems (pkgs: {

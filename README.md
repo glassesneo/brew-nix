@@ -17,7 +17,7 @@ This is a fork of [BatteredBunny/brew-nix](https://github.com/BatteredBunny/brew
 2. Some programs refuse to run from non-standard locations, since this is automatic there isn't a good way to fix it.
 3. There're about 700 casks without hashes, so you have to [override the derivation attributes & provide a hash explicitly](#overriding-casks-derivation-attributes-for-casks-with-no-hash).
 4. Having several generations with this will take A LOT of disk space, so keep that in mind.
-5. brew-nix tracks nixpkgs-unstable, which no longer supports `x86_64-darwin`. `mkCasks` takes `pkgs` as an argument, so intel users can pass an older nixpkgs such as `nixpkgs-26.05-darwin`.
+5. Only `aarch64-darwin` is supported. Intel Macs are not tested.
 
 ## Related projects
 
@@ -149,7 +149,7 @@ Many casks do not come with their hash so you'll have to provide one explicitly.
 
 ## Overriding cask's variation
 
-On x86_64, brew-nix tries to automatically choose the newest intel macOS variant available, that may not be correct though, in those cases it maybe be needed to manually override the cask variant chosen.
+Some casks ship different builds per macOS version or architecture. To pick a specific one, override the cask variant chosen.
 You can look up each cask's respective variations at [brew.sh](https://brew.sh/).
 
 ```nix

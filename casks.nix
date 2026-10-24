@@ -14,7 +14,8 @@
     then cask.variations."${variation}"
     else throw "Variation '${variation}' not found for ${cask.token}. Available: ${toString (lib.attrsets.attrNames (cask.variations or {}))}";
 
-  # The url key is usually the binary for arm64, for intel we need to select the url from variants
+  # The url key is usually the binary for arm64, for intel we need to select the url from variants.
+  # Intel Macs are not supported or tested; this is kept as a best effort.
   intelMacosPreference = [
     "tahoe"
     "sequoia"
