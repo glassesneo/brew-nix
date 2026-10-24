@@ -1,0 +1,57 @@
+# Reusable workflow for tap data repos: regenerates cask.json with gen-tap and
+# commits it when it changed. The caller must grant `contents: write`.
+name: gen-tap
+
+on:
+  workflow_call:
+    inputs:
+      tap:
+        description: Homebrew tap to dump, e.g. user/repo
+        required: true
+        type: string
+      output:
+        description: Path of the generated cask.json in the caller repository
+        default: cask.json
+        type: string
+      brew-nix:
+        description: Flake reference that provides gen-tap
+        default: github:glassesneo/brew-nix
+        type: string
+
+permissions: {}
+
+jobs:
+  gen-tap:
+    name: generate ${{ inputs.tap }}
+    runs-on: macos-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: true
+      - uses: DeterminateSystems/nix-installer-action@3138316df39ed29be04236d7ffc686fa525866aa # v23
+        with:
+          extra-conf: |
+            experimental-features = nix-command flakes
+
+      - name: Generate cask.json
+        env:
+          TAP: ${{ inputs.tap }}
+          OUTPUT: ${{ inputs.output }}
+          BREW_NIX: ${{ inputs.brew-nix }}
+        run: nix run "$BREW_NIX#gen-tap" -- "$TAP" > "$OUTPUT"
+
+      - name: Commit changes
+        env:
+          OUTPUT: ${{ inputs.output }}
+        run: |
+          git add -- "$OUTPUT"
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "Update $OUTPUT"
+          git push
