@@ -1,13 +1,9 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     brew-api = {
       url = "github:BatteredBunny/brew-api";
       flake = false;
-    };
-    nix-darwin = {
-      url = "github:nix-darwin/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -16,7 +12,6 @@
       self,
       nixpkgs,
       brew-api,
-      nix-darwin,
       ...
     }:
     let
@@ -53,13 +48,5 @@
       };
 
       darwinModules.default = lib.modules.importApply ./module.nix { brewCasks = self.overlays.default; };
-
-      checks = forAllSystems (pkgs: {
-        build-examples =
-          ((import ./examples/flake.nix).outputs {
-            inherit nix-darwin;
-            brew-nix = self;
-          }).darwinConfigurations.somehost.system;
-      });
     };
 }
