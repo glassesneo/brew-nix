@@ -4,6 +4,9 @@
 
 An experimental nix expression to package macOS [Homebrew Casks](https://brew.sh/) automatically, including casks from third-party taps.
 
+> [!IMPORTANT]
+> This fork continues as [glassesneo/cask2nix](https://github.com/glassesneo/cask2nix) and is archived. Use `github:glassesneo/cask2nix` instead.
+
 This is a fork of [BatteredBunny/brew-nix](https://github.com/BatteredBunny/brew-nix).
 
 ## Benefits over nix-darwin's homebrew module
