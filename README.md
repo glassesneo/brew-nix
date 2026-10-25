@@ -28,9 +28,10 @@ This is a fork of [BatteredBunny/brew-nix](https://github.com/BatteredBunny/brew
 
 brew-nix is only the mechanism; the cask data comes from elsewhere.
 
-- `brew-nix.lib.mkCasks { pkgs, source }` turns one data source into an attrset of cask packages. `source` is a directory containing a `cask.json`.
+- `brew-nix.lib.mkCasks { pkgs, source }` turns one data source into an attrset of cask packages. `source` is a directory containing a `cask.json`: a JSON array of casks as printed by `brew info --json=v2 --variations`.
+- `brew-nix.lib.mkTaps { pkgs, source }` does the same for many taps at once. `source` is a directory laid out as `<user>/<repo>/cask.json`, and the result is an attrset `<user>.<repo>.<cask>`.
 - [`brew-api`](https://github.com/BatteredBunny/brew-api) provides `cask.json` for the official `homebrew/cask` tap.
-- `gen-tap` produces the same `cask.json` format for any third-party tap.
+- [`brew-taps-api`](https://github.com/glassesneo/brew-taps-api) generates the `mkTaps` layout for third-party taps.
 
 brew-nix pins no data and provides no overlay. You bind data to it once in your own flake and decide where the packages live.
 
@@ -91,43 +92,22 @@ nix build .#brewCasks.blender
 
 ## Third-party taps
 
-Each tap is a separate data source, generated with `gen-tap` (requires `brew` on `PATH`):
-
-```bash
-nix run github:glassesneo/brew-nix#gen-tap -- nikitabobko/tap > cask.json
-```
-
-To keep the data up to date, put it in its own repository and call the reusable workflow on a schedule:
-
-```yaml
-# .github/workflows/update.yml in your tap data repository
-name: update
-on:
-  schedule:
-    - cron: "0 0 * * *"
-  workflow_dispatch:
-
-jobs:
-  gen-tap:
-    permissions:
-      contents: write
-    uses: glassesneo/brew-nix/.github/workflows/gen-tap.yml@main
-    with:
-      tap: nikitabobko/tap
-```
-
-Add the repository as a non-flake input and bind it next to `brewCasks`:
+Third-party taps need `brew` to evaluate their Ruby casks, so their data is generated outside of Nix by [`brew-taps-api`](https://github.com/glassesneo/brew-taps-api) or a repository made from it. Add it as a non-flake input and bind its `taps` directory next to `brewCasks`:
 
 ```nix
-inputs.my-tap = {
-  url = "github:you/my-tap-data";
+inputs.brew-taps-api = {
+  url = "github:glassesneo/brew-taps-api";
   flake = false;
 };
 
 legacyPackages.${system} = {
   brewCasks = brew-nix.lib.mkCasks { inherit pkgs; source = brew-api; };
-  brewTaps.nikitabobko = brew-nix.lib.mkCasks { inherit pkgs; source = my-tap; };
+  brewTaps = brew-nix.lib.mkTaps { inherit pkgs; source = "${brew-taps-api}/taps"; };
 };
+```
+
+```nix
+brewTaps.nikitabobko.tap.aerospace
 ```
 
 brew-nix never merges sources, so tap casks cannot shadow `homebrew/cask` ones unless you merge them yourself.
@@ -169,7 +149,7 @@ brewCasks.visual-studio-code.override { variation = "sequoia"; }
 
 # Development
 
-[`tests/flake.nix`](tests/flake.nix) binds brew-nix to brew-api and serves as the test fixture.
+[`tests/flake.nix`](tests/flake.nix) binds brew-nix to brew-api and to the tap fixtures in [`tests/fixtures/taps`](tests/fixtures/taps), and serves as the test fixture.
 
 ```bash
 nix flake check ./tests # evaluate every cask

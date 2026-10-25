@@ -1,4 +1,5 @@
-# Test fixture and usage example: binds brew-nix to brew-api data.
+# Test fixture and usage example: binds brew-nix to brew-api data and to the
+# tap layout in ./fixtures/taps.
 # Run from the repository root, e.g. `nix build ./tests#brewCasks.rectangle`.
 {
   inputs = {
@@ -33,6 +34,10 @@
           inherit pkgs;
           source = brew-api;
         };
+        brewTaps = brew-nix.lib.mkTaps {
+          inherit pkgs;
+          source = ./fixtures/taps;
+        };
       });
 
       # Evaluate every cask without building them.
@@ -43,6 +48,21 @@
             drvPaths = lib.mapAttrsToList (_: cask: cask.drvPath) brewCasks;
           in
           pkgs.writeText "eval-casks" (builtins.unsafeDiscardStringContext (lib.concatLines drvPaths));
+
+        # Every tap directory becomes <user>.<repo> holding that tap's casks.
+        eval-taps =
+          let
+            inherit (self.legacyPackages.${pkgs.stdenv.hostPlatform.system}) brewTaps;
+            names = lib.mapAttrs (_: lib.mapAttrs (_: lib.attrNames)) brewTaps;
+            drvPaths = lib.collect lib.isString (lib.mapAttrs (_: lib.mapAttrs (_: lib.mapAttrs (_: cask: cask.drvPath))) brewTaps);
+          in
+          assert names == {
+            example = {
+              other = [ "kitty" ];
+              tap = [ "rectangle" ];
+            };
+          };
+          pkgs.writeText "eval-taps" (builtins.unsafeDiscardStringContext (lib.concatLines drvPaths));
       });
     };
 }
